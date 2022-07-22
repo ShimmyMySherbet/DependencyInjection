@@ -10,13 +10,14 @@ using ShimmyMySherbet.DependencyInjection.Models.Lifetimes;
 
 namespace ShimmyMySherbet.DependencyInjection
 {
-    public class ServiceHost : IServiceProvider
+    public class ServiceHost : IServiceProvider, IHost
     {
         public ConfigurationBuilder Configuration { get; }
 
         public IContainerServiceCollection ServiceCollection { get; } = new ServicesContainer();
         public ITypeActivator Activator { get; } = new TypeActivator();
         public IContainerLifetime Lifetime { get; } = new ContainerLifetime();
+        public IServiceProvider Services => this;
 
         public ServiceHost()
         {
@@ -94,6 +95,36 @@ namespace ShimmyMySherbet.DependencyInjection
             return service.GetInstance();
         }
 
+        public object? TryGetService(Type serviceType)
+        {
+            if (serviceType.IsTypeLogger())
+            {
+                return ActivateType(serviceType);
+            }
+
+            var service = ServiceCollection.GetService(serviceType);
+            if (service == null)
+            {
+                return null;
+            }
+            return service.GetInstance();
+        }
+
+        public T? TryGetService<T>()
+        {
+            if (typeof(T).IsTypeLogger())
+            {
+                return ActivateType<T>();
+            }
+
+            var service = ServiceCollection.GetService(typeof(T));
+            if (service == null)
+            {
+                return default;
+            }
+            return (T)service.GetInstance();
+        }
+
         public T[] GetServices<T>()
         {
             var services = ServiceCollection.GetServices(typeof(T));
@@ -112,34 +143,43 @@ namespace ShimmyMySherbet.DependencyInjection
 
             Lifetime.WaitForShutdown();
 
-            using (var shutdownServices = ServiceCollection.GetServiceIterator<IHostedService>())
+            using var shutdownServices = ServiceCollection.GetServiceIterator<IHostedService>();
+            while (shutdownServices.MoveNext())
             {
-                while (shutdownServices.MoveNext())
-                {
-                    shutdownServices.Current.StopAsync(default(CancellationToken)).Wait();
-                }
+                shutdownServices.Current.StopAsync(default).Wait();
             }
         }
 
         public async Task RunAsync()
         {
-            using (var startupServices = ServiceCollection.GetServiceIterator<IHostedService>())
-            {
-                while (startupServices.MoveNext())
-                {
-                    await startupServices.Current.StartAsync(Lifetime.Token);
-                }
-            }
+            await StartAsync();
 
             await Lifetime.WaitForShutdownAsync();
 
-            using (var shutdownServices = ServiceCollection.GetServiceIterator<IHostedService>())
+            await StopAsync();
+        }
+
+        public async Task StartAsync(CancellationToken cancellationToken = default)
+        {
+            using var startupServices = ServiceCollection.GetServiceIterator<IHostedService>();
+            while (startupServices.MoveNext())
             {
-                while (shutdownServices.MoveNext())
-                {
-                    await shutdownServices.Current.StopAsync(default(CancellationToken));
-                }
+                await startupServices.Current.StartAsync(Lifetime.Token);
             }
+        }
+
+        public async Task StopAsync(CancellationToken cancellationToken = default)
+        {
+            using var shutdownServices = ServiceCollection.GetServiceIterator<IHostedService>();
+            while (shutdownServices.MoveNext())
+            {
+                await shutdownServices.Current.StopAsync(default);
+            }
+        }
+
+        public void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

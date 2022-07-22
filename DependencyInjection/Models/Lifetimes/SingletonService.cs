@@ -1,5 +1,4 @@
 ﻿using System;
-using ShimmyMySherbet.DependencyInjection;
 using ShimmyMySherbet.DependencyInjection.Models.Interfaces;
 
 namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
@@ -8,9 +7,11 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
     {
         public Type Type { get; }
 
-        private ServiceHost? m_Container;
+        private readonly ServiceHost? m_Container;
 
         private object? m_Instance = null;
+
+        private readonly Func<object>? m_Factory = null;
 
         public SingletonService(ServiceHost container, Type type)
         {
@@ -24,14 +25,32 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
             Type = type;
         }
 
+        public SingletonService(Func<object> factory, Type type)
+        {
+            Type = type;
+            m_Factory = factory;
+        }
+
         public object GetInstance()
         {
+            if (m_Instance != null)
+            {
+                return m_Instance;
+            }
+
+            if (m_Factory != null)
+            {
+                m_Instance = m_Factory();
+            }
+
+            if (m_Container != null)
+            {
+                m_Instance = m_Container.ActivateType(Type, Array.Empty<object>());
+            }
+
             if (m_Instance == null)
             {
-                if (m_Container == null)
-                    throw new InvalidOperationException();
-
-                m_Instance = m_Container.ActivateType(Type, new object[0]);
+                throw new ArgumentNullException($"Service instantiator returned a null service for {Type.FullName}");
             }
 
             return m_Instance;

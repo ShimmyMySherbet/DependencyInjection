@@ -6,10 +6,10 @@ namespace ShimmyMySherbet.DependencyInjection.Models
 {
     public class ContainerLifetime : IContainerLifetime
     {
-        private CancellationTokenSource m_Source = new CancellationTokenSource();
+        private readonly CancellationTokenSource m_Source = new();
         public CancellationToken Token => m_Source.Token;
 
-        private TaskCompletionSource<ContainerLifetime> m_Awaiter = new TaskCompletionSource<ContainerLifetime>();
+        private readonly TaskCompletionSource<ContainerLifetime> m_Awaiter = new();
 
         public async Task WaitForShutdownAsync()
         {

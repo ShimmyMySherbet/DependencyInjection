@@ -8,7 +8,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
 {
     public class ConfigurationBuilder : IConfigurationBuilder
     {
-        private IContainerServiceCollection m_Services;
+        private readonly IContainerServiceCollection m_Services;
 
         public ConfigurationBuilder(IContainerServiceCollection services)
         {

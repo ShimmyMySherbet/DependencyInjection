@@ -1,5 +1,4 @@
 ﻿using System;
-using ShimmyMySherbet.DependencyInjection;
 using ShimmyMySherbet.DependencyInjection.Models.Interfaces;
 
 namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
@@ -8,7 +7,9 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
     {
         public Type Type { get; }
 
-        private ServiceHost m_Container;
+        private readonly ServiceHost? m_Container;
+
+        private readonly Func<object>? m_Factory;
 
         public TransientService(ServiceHost container, Type type)
         {
@@ -16,9 +17,23 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
             m_Container = container;
         }
 
+        public TransientService(Func<object> factory, Type type)
+        {
+            Type = type;
+            m_Factory = factory;
+        }
+
         public object GetInstance()
         {
-            return m_Container.ActivateType(Type);
+            if (m_Factory != null)
+            {
+                return m_Factory();
+            }
+            else if (m_Container != null)
+            {
+                return m_Container.ActivateType(Type);
+            }
+            throw new InvalidOperationException(); // Shouldn't be possible.
         }
     }
 }

@@ -16,7 +16,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
 
         public object ActivateType(IContainerServiceCollection services, Type type)
         {
-            return ActivateType(services, type, new object[0]);
+            return ActivateType(services, type, Array.Empty<object>());
         }
 
         public object ActivateType(IContainerServiceCollection containerServices, Type type, object[] extras)
@@ -76,7 +76,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
             throw new FailedToActivateException(type);
         }
 
-        public object? ActivateTypeLogger(IContainerServiceCollection containerServices, Type type)
+        public static object? ActivateTypeLogger(IContainerServiceCollection containerServices, Type type)
         {
             var generics = type.GetGenericArguments();
             if (generics.Length != 1)

@@ -7,7 +7,9 @@ namespace ShimmyMySherbet.DependencyInjection.Models
 {
     public class ServicesContainer : IContainerServiceCollection
     {
-        private List<IContainerService> m_Services = new List<IContainerService>();
+        private readonly List<IContainerService> m_Services = new();
+
+        public int Count => m_Services.Count;
 
         public IContainerService? GetService(Type type)
         {
@@ -65,6 +67,32 @@ namespace ShimmyMySherbet.DependencyInjection.Models
                     yield return (T)service.GetInstance();
                 }
             }
+        }
+
+        public IContainerService GetAtIndex(int index)
+        {
+            return m_Services[index];
+        }
+
+        public void RemoveAt(int index)
+        {
+            lock (m_Services)
+            {
+                m_Services.RemoveAt(index);
+            }
+        }
+
+        public IEnumerator<IContainerService> GetServices()
+        {
+            for (int i = 0; i < m_Services.Count; i++)
+            {
+                yield return m_Services[i];
+            }
+        }
+
+        public void InsertAt(IContainerService service, int index)
+        {
+            m_Services.Insert(index, service);
         }
     }
 }
