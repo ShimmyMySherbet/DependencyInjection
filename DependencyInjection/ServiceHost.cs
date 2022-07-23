@@ -16,11 +16,12 @@ namespace ShimmyMySherbet.DependencyInjection
 
         public IContainerServiceCollection ServiceCollection { get; } = new ServicesContainer();
         public ITypeActivator Activator { get; } = new TypeActivator();
-        public IContainerLifetime Lifetime { get; } = new ContainerLifetime();
+        public IContainerLifetime Lifetime { get; }
         public IServiceProvider Services => this;
 
         public ServiceHost()
         {
+            Lifetime = new ContainerLifetime(this);
             Configuration = new ConfigurationBuilder(ServiceCollection);
             RegisterSingleton(Lifetime);
             RegisterSingleton(ServiceCollection);
@@ -29,7 +30,10 @@ namespace ShimmyMySherbet.DependencyInjection
 
         #region "Registering"
 
-        public void RegisterHostedService<T>()
+        /// <summary>
+        /// Registers a hosted service to teh container
+        /// </summary>
+        public void RegisterHostedService<T>() where T : IHostedService
         {
             RegisterSingleton<T>();
         }
@@ -145,6 +149,7 @@ namespace ShimmyMySherbet.DependencyInjection
                     startupServices.Current.StartAsync(Lifetime.Token).Wait();
                 }
             }
+            Lifetime.SendStarted();
 
             Lifetime.WaitForShutdown();
 
@@ -153,6 +158,7 @@ namespace ShimmyMySherbet.DependencyInjection
             {
                 shutdownServices.Current.StopAsync(default).Wait();
             }
+            Lifetime.SendShutdownFinished();
         }
 
         public async Task RunAsync()
@@ -171,6 +177,7 @@ namespace ShimmyMySherbet.DependencyInjection
             {
                 await startupServices.Current.StartAsync(Lifetime.Token);
             }
+            Lifetime.SendStarted();
         }
 
         public async Task StopAsync(CancellationToken cancellationToken = default)
@@ -180,6 +187,7 @@ namespace ShimmyMySherbet.DependencyInjection
             {
                 await shutdownServices.Current.StopAsync(default);
             }
+            Lifetime.SendShutdownFinished();
         }
 
         public void Dispose()

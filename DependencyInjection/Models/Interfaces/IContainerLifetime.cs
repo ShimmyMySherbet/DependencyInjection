@@ -12,5 +12,8 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Interfaces
         Task WaitForShutdownAsync();
 
         void WaitForShutdown();
+        public void SendStarted();
+        public void SendShutdownFinished();
+
     }
 }

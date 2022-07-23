@@ -37,6 +37,12 @@ namespace ShimmyMySherbet.DependencyInjection.Models
             return m_Host;
         }
 
+        public ServiceHost BuildHost()
+        {
+            m_Host.Configuration.Build();
+            return m_Host;
+        }
+
         public IHostBuilder ConfigureAppConfiguration(Action<HostBuilderContext, IConfigurationBuilder> configureDelegate)
         {
             configureDelegate(GetContext(), m_Host.Configuration);

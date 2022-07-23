@@ -10,7 +10,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
     {
         public static bool IsTypeLogger(this Type t)
         {
-            return t.GetGenericTypeDefinition() == typeof(ILogger<>);
+            return t.IsGenericType && t.GetGenericTypeDefinition() == typeof(ILogger<>);
         }
 
         public static IContainerService ToService(this ServiceDescriptor descriptor, ServiceHost provider)
