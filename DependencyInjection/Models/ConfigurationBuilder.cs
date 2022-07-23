@@ -18,21 +18,31 @@ namespace ShimmyMySherbet.DependencyInjection.Models
         public IDictionary<string, object> Properties { get; } = new Dictionary<string, object>();
         public IList<IConfigurationSource> Sources { get; } = new List<IConfigurationSource>();
 
+        public List<IConfigurationSource> UncommitedSources { get; } = new List<IConfigurationSource>();
+
         public IConfigurationBuilder Add(IConfigurationSource source)
         {
-            lock (Sources)
+            lock (UncommitedSources)
             {
-                Sources.Add(source);
+                UncommitedSources.Add(source);
             }
             return this;
         }
 
         public IConfigurationRoot Build()
         {
+            lock (UncommitedSources)
+            {
+                foreach (var source in UncommitedSources)
+                    Sources.Add(source);
+                UncommitedSources.Clear();
+            }
+
             var configRoot = new ConfigurationRoot(Sources
                 .Select(x => x.Build(this))
                 .ToList());
 
+            m_Services.RemoveService(typeof(IConfiguration));
             m_Services.AddService(new SingletonService(typeof(IConfiguration), configRoot));
 
             return configRoot;

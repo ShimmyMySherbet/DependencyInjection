@@ -33,6 +33,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
 
         public IHost Build()
         {
+            m_Host.Configuration.Build();
             return m_Host;
         }
 

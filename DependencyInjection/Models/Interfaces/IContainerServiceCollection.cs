@@ -15,6 +15,8 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Interfaces
 
         void RemoveService(IContainerService service);
 
+        int RemoveService(Type type);
+
         IEnumerator<object> GetServiceIterator(Type t);
 
         IEnumerator<T> GetServiceIterator<T>();

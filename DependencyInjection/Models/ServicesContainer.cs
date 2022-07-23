@@ -94,5 +94,13 @@ namespace ShimmyMySherbet.DependencyInjection.Models
         {
             m_Services.Insert(index, service);
         }
+
+        public int RemoveService(Type type)
+        {
+            lock (m_Services)
+            {
+                return m_Services.RemoveAll(x => type.IsAssignableFrom(x.Type));
+            }
+        }
     }
 }
