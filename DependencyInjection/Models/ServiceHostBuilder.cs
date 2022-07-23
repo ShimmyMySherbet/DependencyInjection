@@ -6,16 +6,16 @@ using Microsoft.Extensions.Hosting;
 
 namespace ShimmyMySherbet.DependencyInjection.Models
 {
-    public class HostBuilder : IHostBuilder
+    public class ServiceHostBuilder : IHostBuilder
     {
         private readonly ServiceHost m_Host;
 
-        public HostBuilder()
+        public ServiceHostBuilder()
         {
             m_Host = new ServiceHost();
         }
 
-        public HostBuilder(ServiceHost host)
+        public ServiceHostBuilder(ServiceHost host)
         {
             m_Host = host;
         }
