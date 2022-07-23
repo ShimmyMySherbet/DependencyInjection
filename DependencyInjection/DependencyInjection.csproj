@@ -16,7 +16,7 @@ Allows for services to be registered at runtime, facilitating plugin systems and
 	<RepositoryUrl>https://github.com/ShimmyMySherbet/DependencyInjection</RepositoryUrl>
 	<AssemblyName>ShimmyMySherbet.DependencyInjection</AssemblyName>
 	<RootNamespace>ShimmyMySherbet.DependencyInjection</RootNamespace>
-	<Version>1.2.0</Version>
+	<Version>1.2.2</Version>
   </PropertyGroup>
 
   <ItemGroup>

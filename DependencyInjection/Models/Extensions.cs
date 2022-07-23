@@ -69,50 +69,5 @@ namespace ShimmyMySherbet.DependencyInjection.Models
             }
             return new ServiceDescriptor(service.Type, (_) => service.GetInstance(), lifetime);
         }
-
-        public static void RegisterSingleton<O>(this ServiceHost host, Func<O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton2<O>(this ServiceHost host, Func<O, object> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1>(this ServiceHost host, Func<A1, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1, A2>(this ServiceHost host, Func<A1, A2, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1, A2, A3>(this ServiceHost host, Func<A1, A2, A3, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1, A2, A3, A4>(this ServiceHost host, Func<A1, A2, A3, A4, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1, A2, A3, A4, A5>(this ServiceHost host, Func<A1, A2, A3, A4, A5, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterSingleton<O, A1, A2, A3, A4, A5, A6>(this ServiceHost host, Func<A1, A2, A3, A4, A5, A6, O> factory) =>
-            host.RegisterSingleton(factory, typeof(O));
-
-        public static void RegisterTransient<O>(this ServiceHost host, Func<O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1>(this ServiceHost host, Func<A1, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1, A2>(this ServiceHost host, Func<A1, A2, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1, A2, A3>(this ServiceHost host, Func<A1, A2, A3, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1, A2, A3, A4>(this ServiceHost host, Func<A1, A2, A3, A4, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1, A2, A3, A4, A5>(this ServiceHost host, Func<A1, A2, A3, A4, A5, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
-
-        public static void RegisterTransient<O, A1, A2, A3, A4, A5, A6>(this ServiceHost host, Func<A1, A2, A3, A4, A5, A6, O> factory) =>
-            host.RegisterTransient(factory, typeof(O));
     }
 }

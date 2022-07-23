@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Hosting;
@@ -52,9 +53,16 @@ namespace ShimmyMySherbet.DependencyInjection
             ServiceCollection.AddService(new SingletonService(typeof(T), instance));
         }
 
-        public void RegisterSingleton(Delegate factory, Type type)
+        public void RegisterSingletonFactory(Delegate factory, Type declaringType)
         {
-            var service = new SingletonService(() => Invoker.Invoke(factory), type);
+            var service = new SingletonService(() => Invoker.Invoke(factory), declaringType);
+            ServiceCollection.AddService(service);
+        }
+
+        public void RegisterSingletonFactory(Delegate factory)
+        {
+            var method = factory.GetMethodInfo();
+            var service = new SingletonService(() => Invoker.Invoke(factory), method.ReturnType);
             ServiceCollection.AddService(service);
         }
 
@@ -78,9 +86,16 @@ namespace ShimmyMySherbet.DependencyInjection
             ServiceCollection.AddService(new TransientService(this, t));
         }
 
-        public void RegisterTransient(Delegate factory, Type type)
+        public void RegisterTransientFactory(Delegate factory)
         {
-            var service = new TransientService(() => Invoker.Invoke(factory), type);
+            var method = factory.GetMethodInfo();
+            var service = new TransientService(() => Invoker.Invoke(factory), method.ReturnType);
+            ServiceCollection.AddService(service);
+        }
+
+        public void RegisterTransientFactory(Delegate factory, Type declaringType)
+        {
+            var service = new TransientService(() => Invoker.Invoke(factory), declaringType);
             ServiceCollection.AddService(service);
         }
 
