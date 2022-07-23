@@ -18,13 +18,17 @@ namespace ShimmyMySherbet.DependencyInjection
         public ITypeActivator Activator { get; } = new TypeActivator();
         public IContainerLifetime Lifetime { get; }
         public IServiceProvider Services => this;
+        public IDynamicInvoker Invoker { get; }
 
         public ServiceHost()
         {
+            Invoker = new DynamicInvoker(ServiceCollection);
             Lifetime = new ContainerLifetime(this);
             Configuration = new ConfigurationBuilder(ServiceCollection);
+
             RegisterSingleton(Lifetime);
             RegisterSingleton(ServiceCollection);
+            RegisterSingleton(Invoker);
             RegisterSingleton(this);
         }
 
@@ -48,6 +52,12 @@ namespace ShimmyMySherbet.DependencyInjection
             ServiceCollection.AddService(new SingletonService(typeof(T), instance));
         }
 
+        public void RegisterSingleton(Delegate factory, Type type)
+        {
+            var service = new SingletonService(() => Invoker.Invoke(factory), type);
+            ServiceCollection.AddService(service);
+        }
+
         public void RegisterSingletonType(Type type)
         {
             ServiceCollection.AddService(new SingletonService(this, type));
@@ -66,6 +76,12 @@ namespace ShimmyMySherbet.DependencyInjection
         public void RegisterTransient(Type t)
         {
             ServiceCollection.AddService(new TransientService(this, t));
+        }
+
+        public void RegisterTransient(Delegate factory, Type type)
+        {
+            var service = new TransientService(() => Invoker.Invoke(factory), type);
+            ServiceCollection.AddService(service);
         }
 
         #endregion "Registering"
