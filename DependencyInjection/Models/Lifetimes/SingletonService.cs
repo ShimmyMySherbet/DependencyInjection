@@ -11,7 +11,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
 
         private object? m_Instance = null;
 
-        private readonly Func<object>? m_Factory = null;
+        private readonly Func<object?>? m_Factory = null;
 
         public SingletonService(ServiceHost container, Type type)
         {
@@ -25,7 +25,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
             Type = type;
         }
 
-        public SingletonService(Func<object> factory, Type type)
+        public SingletonService(Func<object?> factory, Type type)
         {
             Type = type;
             m_Factory = factory;

@@ -9,7 +9,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
 
         private readonly ServiceHost? m_Container;
 
-        private readonly Func<object>? m_Factory;
+        private readonly Func<object?>? m_Factory;
 
         public TransientService(ServiceHost container, Type type)
         {
@@ -17,7 +17,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
             m_Container = container;
         }
 
-        public TransientService(Func<object> factory, Type type)
+        public TransientService(Func<object?> factory, Type type)
         {
             Type = type;
             m_Factory = factory;
@@ -27,7 +27,12 @@ namespace ShimmyMySherbet.DependencyInjection.Models.Lifetimes
         {
             if (m_Factory != null)
             {
-                return m_Factory();
+                var serviceInstance = m_Factory();
+                if (serviceInstance == null)
+                {
+                    throw new ArgumentNullException($"Service instantiator returned a null service for {Type.FullName}");
+                }
+                return serviceInstance;
             }
             else if (m_Container != null)
             {

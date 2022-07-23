@@ -14,7 +14,7 @@ namespace ShimmyMySherbet.DependencyInjection.Models
             m_Services = services;
         }
 
-        public object Invoke(MethodInfo info, object? instance = null)
+        public object? Invoke(MethodInfo info, object? instance = null)
         {
             var parameters = info.GetParameters();
             var arguments = new object[parameters.Length];
@@ -33,19 +33,19 @@ namespace ShimmyMySherbet.DependencyInjection.Models
             return info.Invoke(instance, arguments);
         }
 
-        public T Invoke<T>(MethodInfo info, object? instance = null)
+        public T? Invoke<T>(MethodInfo info, object? instance = null)
         {
-            return (T)Invoke(info, instance);
+            return (T?)Invoke(info, instance);
         }
 
-        public object Invoke(Delegate @delegate)
+        public object? Invoke(Delegate @delegate)
         {
             return Invoke(@delegate.Method, @delegate.Target);
         }
 
-        public T Invoke<T>(Delegate @delegate)
+        public T? Invoke<T>(Delegate @delegate)
         {
-            return (T)Invoke(@delegate);
+            return (T?)Invoke(@delegate);
         }
     }
 }
