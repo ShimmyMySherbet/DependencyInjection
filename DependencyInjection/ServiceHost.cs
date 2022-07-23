@@ -29,6 +29,11 @@ namespace ShimmyMySherbet.DependencyInjection
 
         #region "Registering"
 
+        public void RegisterHostedService<T>()
+        {
+            RegisterSingleton<T>();
+        }
+
         public void RegisterSingleton<T>()
         {
             ServiceCollection.AddService(new SingletonService(this, typeof(T)));
